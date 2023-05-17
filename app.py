@@ -1,26 +1,39 @@
 import os
-from dotenv import load_dotenv
-from flask import Flask, render_template, request, Response
+from typing import List, Optional
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 import openai
 from openai.error import RateLimitError
+from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+class Message(BaseModel):
+    role: str
+    content: str
 
 
-def generate(messages, model_type):
+@app.get("/", response_class=HTMLResponse)
+def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+def generate(messages: List[Message], model_type: str):
     def stream():
         try:
             response = openai.ChatCompletion.create(
                 model=model_type,
-                messages=messages,
+                messages=[message.dict() for message in messages],
                 stream=True
             )
 
@@ -35,16 +48,17 @@ def generate(messages, model_type):
     return stream()
 
 
-@app.route('/gpt4', methods=['POST'])
-def gpt4():
-    data = request.get_json()
-    messages = data.get('messages', [])
-    model_type = data.get('model_type')
+class Gpt4Request(BaseModel):
+    messages: List[Message]
+    model_type: str
 
-    assistant_response = generate(messages, model_type)
-    return Response(assistant_response, mimetype='text/event-stream')
 
+@app.post("/gpt4")
+async def gpt4(request: Gpt4Request):
+    assistant_response = generate(request.messages, request.model_type)
+    return StreamingResponse(assistant_response, media_type='text/event-stream')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=8000)

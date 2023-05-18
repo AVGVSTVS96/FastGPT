@@ -28,24 +28,21 @@ def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-def generate(messages: List[Message], model_type: str):
-    def stream():
-        try:
-            response = openai.ChatCompletion.create(
-                model=model_type,
-                messages=[message.dict() for message in messages],
-                stream=True
-            )
+async def generate(messages: List[Message], model_type: str):
+    try:
+        response = await openai.ChatCompletion.acreate(
+            model=model_type,
+            messages=[message.dict() for message in messages],
+            stream=True
+        )
 
-            for chunk in response:
-                content = chunk['choices'][0]['delta'].get('content', '')
-                if content:
-                    yield content
+        async for chunk in response:
+            content = chunk['choices'][0]['delta'].get('content', '')
+            if content:
+                yield content
 
-        except RateLimitError:
-            yield "The server is experiencing a high volume of requests. Please try again later."
-
-    return stream()
+    except RateLimitError as e:
+        yield f"{str(e)}"
 
 
 class Gpt4Request(BaseModel):

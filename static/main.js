@@ -1,8 +1,8 @@
 const chatMessagesDiv = document.getElementById("chat-messages");
 const userInputElem = document.getElementById("user-input");
 
-const settingsButton = document.getElementById('settings-toggle');
-const settingsDropdown = document.querySelector('.settings-dropdown');
+const settingsButton = document.getElementById("settings-toggle");
+const settingsDropdown = document.querySelector(".settings-dropdown");
 
 const modelToggle = document.getElementById("model-toggle");
 const modelLabel = document.getElementById("model-label");
@@ -18,33 +18,34 @@ modelToggle.addEventListener("change", function () {
     modelName = "gpt-4";
   } else {
     modelLabel.textContent = "GPT-3.5";
-    modelName = "gpt-3.5-turbo"; 
+    modelName = "gpt-3.5-turbo";
   }
 });
 
 function toggleDropdownDisplay() {
-  settingsDropdown.style.display = settingsDropdown.style.display === 'block' ? 'none' : 'block';
+  settingsDropdown.style.display =
+    settingsDropdown.style.display === "block" ? "none" : "block";
 }
 
-document.addEventListener('click', (event) => {
+document.addEventListener("click", (event) => {
   const clickInsideDropdown = settingsDropdown.contains(event.target);
   const clickOnSettingsButton = settingsButton.contains(event.target);
-  
+
   if (!clickInsideDropdown && !clickOnSettingsButton) {
-    settingsDropdown.style.display = 'none';
+    settingsDropdown.style.display = "none";
   } else if (clickOnSettingsButton) {
     toggleDropdownDisplay();
   }
 });
 
 document
-.getElementById("user-input")
-.addEventListener("keydown", function (event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault();
-    document.getElementById("submitBtn").click();
-  }
-});
+  .getElementById("user-input")
+  .addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      document.getElementById("submitBtn").click();
+    }
+  });
 
 window.renderMarkdown = function (content) {
   const md = new markdownit();
@@ -99,7 +100,7 @@ async function handleResponse(response, messageText) {
 
     const text = decoder.decode(value);
     assistantMessage += text;
-    messageText.innerHTML = window.renderMarkdown(assistantMessage).trim(); 
+    messageText.innerHTML = window.renderMarkdown(assistantMessage).trim();
     const codeElements = messageText.querySelectorAll("pre code");
     codeElements.forEach((codeElement) => {
       hljs.highlightElement(codeElement);
@@ -119,9 +120,14 @@ window.onload = function () {
       let modelType = modelName; // may not be needed, use modelName explicitly
 
       // Check if the system message has changed
-      if (systemMessage && (!systemMessageRef || systemMessage !== systemMessageRef.content)) {
+      if (
+        systemMessage &&
+        (!systemMessageRef || systemMessage !== systemMessageRef.content)
+      ) {
         // Find the index of the system message in the messages array
-        let systemMessageIndex = messages.findIndex(message => message.role === "system");
+        let systemMessageIndex = messages.findIndex(
+          (message) => message.role === "system"
+        );
 
         if (systemMessageIndex !== -1) {
           // If the system message exists in the messages array, remove it
@@ -129,11 +135,11 @@ window.onload = function () {
         }
 
         // Add new systemMessage to the end of the messages array
-        systemMessageRef = { role: "system", "content": systemMessage };
+        systemMessageRef = { role: "system", content: systemMessage };
         messages.push(systemMessageRef);
       }
 
-      messages.push({ role: "user", "content": userInput });
+      messages.push({ role: "user", content: userInput });
       addMessageToDiv("user", userInput, "user-input");
 
       // FIXME: handle this in addMessageToDiv function
@@ -145,16 +151,15 @@ window.onload = function () {
       autoScroll();
 
       const response = await fetch("/gpt4", {
-          method: "POST",
-          body: JSON.stringify({
-            messages: messages,
-            model_type: modelType,  
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+        method: "POST",
+        body: JSON.stringify({
+          messages: messages,
+          model_type: modelType,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-
 
       handleResponse(response, messageText);
 

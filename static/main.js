@@ -7,13 +7,15 @@ const settingsDropdown = document.querySelector('.settings-dropdown');
 const modelToggle = document.getElementById("model-toggle");
 const modelLabel = document.getElementById("model-label");
 let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
+
 let messages = [];
+let systemMessageRef = null;
 let autoScrollState = true;
 
 modelToggle.addEventListener("change", function () {
   if (modelToggle.checked) {
     modelLabel.textContent = "GPT-4";
-    modelName = "gpt-4"
+    modelName = "gpt-4";
   } else {
     modelLabel.textContent = "GPT-3.5";
     modelName = "gpt-3.5-turbo"; 
@@ -116,8 +118,19 @@ window.onload = function () {
       let systemMessage = document.getElementById("system-message").value.trim();
       let modelType = modelName; // may not be needed, use modelName explicitly
 
-      if (messages.length === 0 && systemMessage) {
-        messages.push({ role: "system", "content": systemMessage });
+      // Check if the system message has changed
+      if (systemMessage && (!systemMessageRef || systemMessage !== systemMessageRef.content)) {
+        // Find the index of the system message in the messages array
+        let systemMessageIndex = messages.findIndex(message => message.role === "system");
+
+        if (systemMessageIndex !== -1) {
+          // If the system message exists in the messages array, remove it
+          messages.splice(systemMessageIndex, 1);
+        }
+
+        // Add new systemMessage to the end of the messages array
+        systemMessageRef = { role: "system", "content": systemMessage };
+        messages.push(systemMessageRef);
       }
 
       messages.push({ role: "user", "content": userInput });

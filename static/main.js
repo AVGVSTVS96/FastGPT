@@ -117,11 +117,9 @@ window.onload = function () {
 
       let userInput = userInputElem.value.trim();
       let systemMessage = document.getElementById("system-message").value.trim();
-      let modelType = modelName; // may not be needed, use modelName explicitly
 
       // Check if the system message has changed
-      if (
-        systemMessage &&
+      if (systemMessage &&
         (!systemMessageRef || systemMessage !== systemMessageRef.content)
       ) {
         // Find the index of the system message in the messages array
@@ -129,8 +127,8 @@ window.onload = function () {
           (message) => message.role === "system"
         );
 
+        // If the system message exists in the messages array, remove it
         if (systemMessageIndex !== -1) {
-          // If the system message exists in the messages array, remove it
           messages.splice(systemMessageIndex, 1);
         }
 
@@ -154,7 +152,7 @@ window.onload = function () {
         method: "POST",
         body: JSON.stringify({
           messages: messages,
-          model_type: modelType,
+          model_type: modelName,
         }),
         headers: {
           "Content-Type": "application/json",

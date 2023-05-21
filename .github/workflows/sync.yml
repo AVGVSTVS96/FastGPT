@@ -15,4 +15,4 @@ jobs:
         with:
           GH_PAT: ${{ secrets.GH_PAT }}
           CONFIG_PATH: .github/file-paths.yml
-          BRANCH_PREFIX: transfers
+          BRANCH_PREFIX: sync

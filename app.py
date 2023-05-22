@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import openai
-from openai.error import RateLimitError
+from openai.error import OpenAIError
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -41,8 +41,8 @@ async def generate(messages: List[Message], model_type: str):
             if content:
                 yield content
 
-    except RateLimitError as e:
-        yield f"{str(e)}"
+    except OpenAIError as e:
+        yield f"{type(e).__name__}: {str(e)}"
 
 
 class Gpt4Request(BaseModel):

@@ -147,6 +147,7 @@ window.onload = function () {
 
       messages.push({ role: "user", content: userInput });
       addMessageToDiv("user", userInput);
+      userInputElem.value = "";
 
       let messageText = addMessageToDiv("assistant");
 
@@ -162,8 +163,5 @@ window.onload = function () {
       });
 
       handleResponse(response, messageText);
-
-      // FIXME: Move this to happen after user input is sent, not after assitant message is received
-      userInputElem.value = "";
     });
 };

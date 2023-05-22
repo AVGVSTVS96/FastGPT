@@ -109,6 +109,26 @@ async function handleResponse(response, messageText) {
   }
 }
 
+// Check if system message has changed, and update it if it has
+function updateSystemMessage(systemMessage) {
+  if (systemMessage &&
+    (!systemMessageRef || systemMessage !== systemMessageRef.content)) {
+    // Find the index of the system message in the messages array
+    let systemMessageIndex = messages.findIndex(
+      (message) => message.role === "system"
+    );
+
+    // If the system message exists in the messages array, remove it
+    if (systemMessageIndex !== -1) {
+      messages.splice(systemMessageIndex, 1);
+    }
+
+    // Add new systemMessage to the end of the messages array
+    systemMessageRef = { role: "system", content: systemMessage };
+    messages.push(systemMessageRef);
+  }
+}
+
 window.onload = function () {
   document
     .getElementById("chat-form")
@@ -118,24 +138,7 @@ window.onload = function () {
       let userInput = userInputElem.value.trim();
       let systemMessage = document.getElementById("system-message").value.trim();
 
-      // Check if the system message has changed
-      if (systemMessage &&
-        (!systemMessageRef || systemMessage !== systemMessageRef.content)
-      ) {
-        // Find the index of the system message in the messages array
-        let systemMessageIndex = messages.findIndex(
-          (message) => message.role === "system"
-        );
-
-        // If the system message exists in the messages array, remove it
-        if (systemMessageIndex !== -1) {
-          messages.splice(systemMessageIndex, 1);
-        }
-
-        // Add new systemMessage to the end of the messages array
-        systemMessageRef = { role: "system", content: systemMessage };
-        messages.push(systemMessageRef);
-      }
+      updateSystemMessage(systemMessage);
 
       messages.push({ role: "user", content: userInput });
       addMessageToDiv("user", userInput, "user-input");

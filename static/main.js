@@ -12,6 +12,11 @@ let messages = [];
 let systemMessageRef = null;
 let autoScrollState = true;
 
+function toggleDropdownDisplay() {
+  settingsDropdown.style.display =
+    settingsDropdown.style.display === "block" ? "none" : "block";
+}
+
 modelToggle.addEventListener("change", function () {
   if (modelToggle.checked) {
     modelLabel.textContent = "GPT-4";
@@ -22,12 +27,7 @@ modelToggle.addEventListener("change", function () {
   }
 });
 
-function toggleDropdownDisplay() {
-  settingsDropdown.style.display =
-    settingsDropdown.style.display === "block" ? "none" : "block";
-}
-
-document.addEventListener("click", (event) => {
+function closeDropdown(event) {
   const clickInsideDropdown = settingsDropdown.contains(event.target);
   const clickOnSettingsButton = settingsButton.contains(event.target);
 
@@ -36,16 +36,17 @@ document.addEventListener("click", (event) => {
   } else if (clickOnSettingsButton) {
     toggleDropdownDisplay();
   }
-});
+}
 
-document
-  .getElementById("user-input")
-  .addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      document.getElementById("submitBtn").click();
-    }
-  });
+function handleInputKeydown(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    document.getElementById("submitBtn").click();
+  }
+}
+
+document.addEventListener("click", closeDropdown);
+document.getElementById("user-input").addEventListener("keydown", handleInputKeydown);
 
 window.renderMarkdown = function (content) {
   const md = new markdownit();
@@ -118,17 +119,15 @@ async function handleResponse(response, messageText) {
 }
 
 function updateSystemMessage(systemMessage) {
-  if (systemMessage &&
-    (!systemMessageRef || systemMessage !== systemMessageRef.content)) {
-
-      let systemMessageIndex = messages.findIndex(
-      (message) => message.role === "system"
-    );
+  if (
+    systemMessage &&
+    (!systemMessageRef || systemMessage !== systemMessageRef.content)
+  ) {
+    let systemMessageIndex = messages.findIndex((message) => message.role === "system");
     // If the system message exists in array, remove it
     if (systemMessageIndex !== -1) {
       messages.splice(systemMessageIndex, 1);
     }
-
     systemMessageRef = { role: "system", content: systemMessage };
     messages.push(systemMessageRef);
   }
@@ -148,24 +147,22 @@ async function postRequest() {
 }
 
 window.onload = function () {
-  document
-    .getElementById("chat-form")
-    .addEventListener("submit", async function (event) {
-      event.preventDefault();
+  document.getElementById("chat-form").addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-      let userInput = userInputElem.value.trim();
-      let systemMessage = document.getElementById("system-message").value.trim();
+    let userInput = userInputElem.value.trim();
+    let systemMessage = document.getElementById("system-message").value.trim();
 
-      updateSystemMessage(systemMessage);
+    updateSystemMessage(systemMessage);
 
-      messages.push({ role: "user", content: userInput });
-      addMessageToDiv("user", userInput);
-      userInputElem.value = "";
+    messages.push({ role: "user", content: userInput });
+    addMessageToDiv("user", userInput);
+    userInputElem.value = "";
 
-      let messageText = addMessageToDiv("assistant");
+    let messageText = addMessageToDiv("assistant");
 
-      const response = await postRequest();
+    const response = await postRequest();
 
-      handleResponse(response, messageText);
-    });
+    handleResponse(response, messageText);
+  });
 };

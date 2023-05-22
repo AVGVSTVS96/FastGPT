@@ -52,21 +52,30 @@ window.renderMarkdown = function (content) {
   return md.render(content);
 };
 
-function addMessageToDiv(role, content) {
+function addMessageToDiv(role, content = "") {
   let messageDiv = document.createElement("div");
   messageDiv.className =
     role === "user" ? "message user-message" : "message assistant-message";
 
-  let renderedContent = window.renderMarkdown(content).trim();
-  messageDiv.innerHTML = renderedContent;
+  let messageText = document.createElement("p");
+  messageDiv.appendChild(messageText);
+
+  if (content) {
+    let renderedContent = window.renderMarkdown(content).trim();
+    messageText.innerHTML = renderedContent;
+
+    const codeElements = messageDiv.querySelectorAll("pre code");
+    codeElements.forEach((codeElement) => {
+      hljs.highlightElement(codeElement);
+    });
+  }
 
   chatMessagesDiv.appendChild(messageDiv);
-  const codeElements = messageDiv.querySelectorAll("pre code");
-  codeElements.forEach((codeElement) => {
-    hljs.highlightElement(codeElement);
-  });
   autoScroll();
+
+  return messageText;
 }
+
 
 function autoScroll() {
   if (autoScrollState) {
@@ -143,13 +152,7 @@ window.onload = function () {
       messages.push({ role: "user", content: userInput });
       addMessageToDiv("user", userInput, "user-input");
 
-      // FIXME: handle this in addMessageToDiv function
-      let messageDiv = document.createElement("div");
-      messageDiv.className = "message assistant-message";
-      let messageText = document.createElement("p");
-      messageDiv.appendChild(messageText);
-      chatMessagesDiv.appendChild(messageDiv);
-      autoScroll();
+      let messageText = addMessageToDiv("assistant");
 
       const response = await fetch("/gpt4", {
         method: "POST",

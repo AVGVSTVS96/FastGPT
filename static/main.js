@@ -60,6 +60,12 @@ function highlightCode(element) {
   });
 }
 
+function autoScroll() {
+  if (autoScrollState) {
+    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+  }
+}
+
 function addMessageToDiv(role, content = "") {
   let messageDiv = document.createElement("div");
   messageDiv.className =
@@ -80,12 +86,6 @@ function addMessageToDiv(role, content = "") {
   return messageText;
 }
 
-function autoScroll() {
-  if (autoScrollState) {
-    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
-  }
-}
-
 document;
 chatMessagesDiv.addEventListener("scroll", function () {
   const isAtBottom =
@@ -95,58 +95,58 @@ chatMessagesDiv.addEventListener("scroll", function () {
   autoScrollState = isAtBottom;
 });
 
-async function handleResponse(response, messageText) {
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder("utf-8");
-  let assistantMessage = "";
-
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) {
-      messages.push({
-        role: "assistant",
-        content: assistantMessage,
-      });
-      break;
-    }
-
-    const text = decoder.decode(value);
-    assistantMessage += text;
-    messageText.innerHTML = window.renderMarkdown(assistantMessage).trim();
-    highlightCode(messageText);
-    autoScroll();
-  }
-}
-
 function updateSystemMessage(systemMessage) {
   if (
     systemMessage &&
     (!systemMessageRef || systemMessage !== systemMessageRef.content)
-  ) {
-    let systemMessageIndex = messages.findIndex((message) => message.role === "system");
-    // If the system message exists in array, remove it
-    if (systemMessageIndex !== -1) {
-      messages.splice(systemMessageIndex, 1);
+    ) {
+      let systemMessageIndex = messages.findIndex((message) => message.role === "system");
+      // If the system message exists in array, remove it
+      if (systemMessageIndex !== -1) {
+        messages.splice(systemMessageIndex, 1);
+      }
+      systemMessageRef = { role: "system", content: systemMessage };
+      messages.push(systemMessageRef);
     }
-    systemMessageRef = { role: "system", content: systemMessage };
-    messages.push(systemMessageRef);
   }
-}
-
-async function postRequest() {
-  return await fetch("/gpt4", {
-    method: "POST",
-    body: JSON.stringify({
-      messages: messages,
-      model_type: modelName,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-window.onload = function () {
+  
+  async function postRequest() {
+    return await fetch("/gpt4", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: messages,
+        model_type: modelName,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+  
+  async function handleResponse(response, messageText) {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let assistantMessage = "";
+  
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        messages.push({
+          role: "assistant",
+          content: assistantMessage,
+        });
+        break;
+      }
+  
+      const text = decoder.decode(value);
+      assistantMessage += text;
+      messageText.innerHTML = window.renderMarkdown(assistantMessage).trim();
+      highlightCode(messageText);
+      autoScroll();
+    }
+  }
+  
+  window.onload = function () {
   document.getElementById("chat-form").addEventListener("submit", async function (event) {
     event.preventDefault();
 

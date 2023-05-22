@@ -150,7 +150,7 @@ window.onload = function () {
       updateSystemMessage(systemMessage);
 
       messages.push({ role: "user", content: userInput });
-      addMessageToDiv("user", userInput, "user-input");
+      addMessageToDiv("user", userInput);
 
       let messageText = addMessageToDiv("assistant");
 

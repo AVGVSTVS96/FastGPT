@@ -52,6 +52,13 @@ window.renderMarkdown = function (content) {
   return md.render(content);
 };
 
+function highlightCode(element) {
+  const codeElements = element.querySelectorAll("pre code");
+  codeElements.forEach((codeElement) => {
+    hljs.highlightElement(codeElement);
+  });
+}
+
 function addMessageToDiv(role, content = "") {
   let messageDiv = document.createElement("div");
   messageDiv.className =
@@ -63,11 +70,7 @@ function addMessageToDiv(role, content = "") {
   if (content) {
     let renderedContent = window.renderMarkdown(content).trim();
     messageText.innerHTML = renderedContent;
-
-    const codeElements = messageDiv.querySelectorAll("pre code");
-    codeElements.forEach((codeElement) => {
-      hljs.highlightElement(codeElement);
-    });
+    highlightCode(messageDiv);
   }
 
   chatMessagesDiv.appendChild(messageDiv);
@@ -75,7 +78,6 @@ function addMessageToDiv(role, content = "") {
 
   return messageText;
 }
-
 
 function autoScroll() {
   if (autoScrollState) {
@@ -110,10 +112,7 @@ async function handleResponse(response, messageText) {
     const text = decoder.decode(value);
     assistantMessage += text;
     messageText.innerHTML = window.renderMarkdown(assistantMessage).trim();
-    const codeElements = messageText.querySelectorAll("pre code");
-    codeElements.forEach((codeElement) => {
-      hljs.highlightElement(codeElement);
-    });
+    highlightCode(messageText);
     autoScroll();
   }
 }

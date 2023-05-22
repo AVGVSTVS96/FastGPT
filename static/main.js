@@ -1,13 +1,12 @@
 const chatMessagesDiv = document.getElementById("chat-messages");
 const userInputElem = document.getElementById("user-input");
-
 const settingsButton = document.getElementById("settings-toggle");
 const settingsDropdown = document.querySelector(".settings-dropdown");
-
 const modelToggle = document.getElementById("model-toggle");
 const modelLabel = document.getElementById("model-label");
-let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
 
+// State variables
+let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
 let messages = [];
 let systemMessageRef = null;
 let autoScrollState = true;
@@ -17,7 +16,8 @@ function toggleDropdownDisplay() {
     settingsDropdown.style.display === "block" ? "none" : "block";
 }
 
-modelToggle.addEventListener("change", function () {
+// Event listener functions
+function handleModelToggle() {
   if (modelToggle.checked) {
     modelLabel.textContent = "GPT-4";
     modelName = "gpt-4";
@@ -25,7 +25,7 @@ modelToggle.addEventListener("change", function () {
     modelLabel.textContent = "GPT-3.5";
     modelName = "gpt-3.5-turbo";
   }
-});
+}
 
 function closeDropdown(event) {
   const clickInsideDropdown = settingsDropdown.contains(event.target);
@@ -45,6 +45,8 @@ function handleInputKeydown(event) {
   }
 }
 
+// Event listeners for functions above
+modelToggle.addEventListener("change", handleModelToggle);
 document.addEventListener("click", closeDropdown);
 document.getElementById("user-input").addEventListener("keydown", handleInputKeydown);
 
@@ -66,6 +68,15 @@ function autoScroll() {
   }
 }
 
+document;
+chatMessagesDiv.addEventListener("scroll", function () {
+  const isAtBottom =
+    chatMessagesDiv.scrollHeight - chatMessagesDiv.clientHeight <=
+    chatMessagesDiv.scrollTop + 1;
+
+  autoScrollState = isAtBottom;
+});
+
 function addMessageToDiv(role, content = "") {
   let messageDiv = document.createElement("div");
   messageDiv.className =
@@ -86,67 +97,58 @@ function addMessageToDiv(role, content = "") {
   return messageText;
 }
 
-document;
-chatMessagesDiv.addEventListener("scroll", function () {
-  const isAtBottom =
-    chatMessagesDiv.scrollHeight - chatMessagesDiv.clientHeight <=
-    chatMessagesDiv.scrollTop + 1;
-
-  autoScrollState = isAtBottom;
-});
-
 function updateSystemMessage(systemMessage) {
   if (
     systemMessage &&
     (!systemMessageRef || systemMessage !== systemMessageRef.content)
-    ) {
-      let systemMessageIndex = messages.findIndex((message) => message.role === "system");
-      // If the system message exists in array, remove it
-      if (systemMessageIndex !== -1) {
-        messages.splice(systemMessageIndex, 1);
-      }
-      systemMessageRef = { role: "system", content: systemMessage };
-      messages.push(systemMessageRef);
+  ) {
+    let systemMessageIndex = messages.findIndex((message) => message.role === "system");
+    // If the system message exists in array, remove it
+    if (systemMessageIndex !== -1) {
+      messages.splice(systemMessageIndex, 1);
     }
+    systemMessageRef = { role: "system", content: systemMessage };
+    messages.push(systemMessageRef);
   }
-  
-  async function postRequest() {
-    return await fetch("/gpt4", {
-      method: "POST",
-      body: JSON.stringify({
-        messages: messages,
-        model_type: modelName,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-  
-  async function handleResponse(response, messageText) {
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let assistantMessage = "";
-  
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) {
-        messages.push({
-          role: "assistant",
-          content: assistantMessage,
-        });
-        break;
-      }
-  
-      const text = decoder.decode(value);
-      assistantMessage += text;
-      messageText.innerHTML = window.renderMarkdown(assistantMessage).trim();
-      highlightCode(messageText);
-      autoScroll();
+}
+
+async function postRequest() {
+  return await fetch("/gpt4", {
+    method: "POST",
+    body: JSON.stringify({
+      messages: messages,
+      model_type: modelName,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+async function handleResponse(response, messageText) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let assistantMessage = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) {
+      messages.push({
+        role: "assistant",
+        content: assistantMessage,
+      });
+      break;
     }
+
+    const text = decoder.decode(value);
+    assistantMessage += text;
+    messageText.innerHTML = window.renderMarkdown(assistantMessage).trim();
+    highlightCode(messageText);
+    autoScroll();
   }
-  
-  window.onload = function () {
+}
+
+window.onload = function () {
   document.getElementById("chat-form").addEventListener("submit", async function (event) {
     event.preventDefault();
 

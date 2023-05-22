@@ -134,6 +134,19 @@ function updateSystemMessage(systemMessage) {
   }
 }
 
+async function postRequest() {
+  return await fetch("/gpt4", {
+    method: "POST",
+    body: JSON.stringify({
+      messages: messages,
+      model_type: modelName,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
 window.onload = function () {
   document
     .getElementById("chat-form")
@@ -151,16 +164,7 @@ window.onload = function () {
 
       let messageText = addMessageToDiv("assistant");
 
-      const response = await fetch("/gpt4", {
-        method: "POST",
-        body: JSON.stringify({
-          messages: messages,
-          model_type: modelName,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await postRequest();
 
       handleResponse(response, messageText);
     });

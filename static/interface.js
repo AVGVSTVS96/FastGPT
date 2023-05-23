@@ -22,21 +22,21 @@ function handleModelToggle() {
   }
 }
 
-function closeDropdown(event) {
-  const clickInsideDropdown = settingsDropdown.contains(event.target);
-  const clickOnSettingsButton = settingsButton.contains(event.target);
+// function closeDropdown(event) {
+//   const clickInsideDropdown = settingsDropdown.contains(event.target);
+//   const clickOnSettingsButton = settingsButton.contains(event.target);
   
-  if (!clickInsideDropdown && !clickOnSettingsButton) {
-    settingsDropdown.style.display = "none";
-  } else if (clickOnSettingsButton) {
-    toggleDropdownDisplay();
-  }
-}
+//   if (!clickInsideDropdown && !clickOnSettingsButton) {
+//     settingsDropdown.style.display = "none";
+//   } else if (clickOnSettingsButton) {
+//     toggleDropdownDisplay();
+//   }
+// }
 
-function toggleDropdownDisplay() {
-  settingsDropdown.style.display =
-    settingsDropdown.style.display === "block" ? "none" : "block";
-}
+// function toggleDropdownDisplay() {
+//   settingsDropdown.style.display =
+//     settingsDropdown.style.display === "block" ? "none" : "block";
+// }
 
 function handleInputKeydown(event) {
   if (event.key === "Enter" && !event.shiftKey) {
@@ -53,7 +53,7 @@ function autoScroll() {
 
 // Event listeners for functions above
 modelToggle.addEventListener("change", handleModelToggle);
-document.addEventListener("click", closeDropdown);
+// document.addEventListener("click", closeDropdown);
 document.getElementById("user-input").addEventListener("keydown", handleInputKeydown);
 
 document;

@@ -3,8 +3,9 @@ const userInputElem = document.getElementById("user-input");
 const settingsButton = document.getElementById("settings-toggle");
 const settingsDropdown = document.querySelector(".settings-dropdown");
 const modelToggle = document.getElementById("model-toggle");
-const modelLabel = document.getElementById("model-label");
-
+// const modelLabel = document.getElementById("model-label");
+const modelLabelLeft = document.getElementById("model-label-left");
+const modelLabelRight = document.getElementById("model-label-right");
 // State variables
 let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
 let messages = [];
@@ -12,17 +13,15 @@ let systemMessageRef = null;
 let autoScrollState = true;
 
 // Event listener functions
-// TODO update for new toggle switch
 function handleModelToggle() {
   if (modelToggle.checked) {
-    modelLabel.textContent = "GPT-4";
+    modelLabelRight.textContent = "GPT-4";
     modelName = "gpt-4";
   } else {
-    modelLabel.textContent = "GPT-3.5";
+    modelLabelLeft.textContent = "GPT-3.5";
     modelName = "gpt-3.5-turbo";
   }
 }
-
 // function closeDropdown(event) {
 //   const clickInsideDropdown = settingsDropdown.contains(event.target);
 //   const clickOnSettingsButton = settingsButton.contains(event.target);

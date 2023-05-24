@@ -12,6 +12,7 @@ let systemMessageRef = null;
 let autoScrollState = true;
 
 // Event listener functions
+// TODO update for new toggle switch
 function handleModelToggle() {
   if (modelToggle.checked) {
     modelLabel.textContent = "GPT-4";

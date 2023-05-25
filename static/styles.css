@@ -238,7 +238,6 @@ body {
 }
 
 .switch {
-  font-size: 17px;
   position: relative;
   display: inline-block;
   width: 8.5em;
@@ -289,4 +288,5 @@ input:checked + .slider .toggle {
   color: hsl(240, 76%, 87%);
   width: 50%;
   z-index: 1;
+  font-size: 15px;
 }

@@ -1,9 +1,6 @@
 const chatMessagesDiv = document.getElementById("chat-messages");
 const userInputElem = document.getElementById("user-input");
-const settingsButton = document.getElementById("settings-toggle");
-const settingsDropdown = document.querySelector(".settings-dropdown");
 const modelToggle = document.getElementById("model-toggle");
-// const modelLabel = document.getElementById("model-label");
 const modelLabelLeft = document.getElementById("model-label-left");
 const modelLabelRight = document.getElementById("model-label-right");
 // State variables
@@ -38,7 +35,6 @@ function autoScroll() {
 
 // Event listeners for functions above
 modelToggle.addEventListener("change", handleModelToggle);
-// document.addEventListener("click", closeDropdown);
 document.getElementById("user-input").addEventListener("keydown", handleInputKeydown);
 
 document;

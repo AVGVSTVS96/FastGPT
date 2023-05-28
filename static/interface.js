@@ -22,21 +22,6 @@ function handleModelToggle() {
     modelName = "gpt-3.5-turbo";
   }
 }
-// function closeDropdown(event) {
-//   const clickInsideDropdown = settingsDropdown.contains(event.target);
-//   const clickOnSettingsButton = settingsButton.contains(event.target);
-  
-//   if (!clickInsideDropdown && !clickOnSettingsButton) {
-//     settingsDropdown.style.display = "none";
-//   } else if (clickOnSettingsButton) {
-//     toggleDropdownDisplay();
-//   }
-// }
-
-// function toggleDropdownDisplay() {
-//   settingsDropdown.style.display =
-//     settingsDropdown.style.display === "block" ? "none" : "block";
-// }
 
 function handleInputKeydown(event) {
   if (event.key === "Enter" && !event.shiftKey) {

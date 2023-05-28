@@ -1,10 +1,8 @@
 const chatMessagesDiv = document.getElementById("chat-messages");
 const userInputElem = document.getElementById("user-input");
-const settingsButton = document.getElementById("settings-toggle");
-const settingsDropdown = document.querySelector(".settings-dropdown");
 const modelToggle = document.getElementById("model-toggle");
-const modelLabel = document.getElementById("model-label");
-
+const modelLabelLeft = document.getElementById("model-label-left");
+const modelLabelRight = document.getElementById("model-label-right");
 // State variables
 let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
 let messages = [];
@@ -14,28 +12,12 @@ let autoScrollState = true;
 // Event listener functions
 function handleModelToggle() {
   if (modelToggle.checked) {
-    modelLabel.textContent = "GPT-4";
+    modelLabelRight.textContent = "GPT-4";
     modelName = "gpt-4";
   } else {
-    modelLabel.textContent = "GPT-3.5";
+    modelLabelLeft.textContent = "GPT-3.5";
     modelName = "gpt-3.5-turbo";
   }
-}
-
-function closeDropdown(event) {
-  const clickInsideDropdown = settingsDropdown.contains(event.target);
-  const clickOnSettingsButton = settingsButton.contains(event.target);
-  
-  if (!clickInsideDropdown && !clickOnSettingsButton) {
-    settingsDropdown.style.display = "none";
-  } else if (clickOnSettingsButton) {
-    toggleDropdownDisplay();
-  }
-}
-
-function toggleDropdownDisplay() {
-  settingsDropdown.style.display =
-    settingsDropdown.style.display === "block" ? "none" : "block";
 }
 
 function handleInputKeydown(event) {
@@ -53,7 +35,6 @@ function autoScroll() {
 
 // Event listeners for functions above
 modelToggle.addEventListener("change", handleModelToggle);
-document.addEventListener("click", closeDropdown);
 document.getElementById("user-input").addEventListener("keydown", handleInputKeydown);
 
 document;

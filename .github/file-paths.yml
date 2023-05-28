@@ -1,4 +1,6 @@
 AVGVSTVS96/FlaskGPT:
   - templates/index.html
   - static/styles.css
-  - static/main.js
+  - static/chat.js
+  - static/interface.js
+  

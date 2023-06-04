@@ -1,7 +1,9 @@
 :root {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --side-margin: 4px;
   --top-bottom-padding: 4px;
   --inner-roundness: 5.5px;
+  --background-grid-size: 38px;
 }
 
 html {
@@ -29,30 +31,22 @@ body {
   align-items: center;
   height: 100dvh;
   margin: 0;
-
-  /* background-color: hsl(240, 45%, 9%); */
-  background-image: radial-gradient(
-      circle at center center,
-      transparent 50%,
-      rgb(0, 0, 0) 200%
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(63, 63, 63, 0.2) 0px,
-      rgba(63, 63, 63, 0.2) 1px,
-      transparent 1px,
-      transparent 38px /* Control Grid Size */
-    ),
-    repeating-linear-gradient(
-      90deg,
-      rgba(63, 63, 63, 0.2) 0px,
-      rgba(63, 63, 63, 0.2) 1px,
-      transparent 1px,
-      transparent 38px /* Control Grid Size */
-    ),
-    linear-gradient(90deg, hsl(240, 17%, 2%), hsl(235, 50%, 9%));
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: hsl(240, 76%, 87%);
+
+  background-image: radial-gradient(circle at center center,
+      transparent 50%,
+      rgb(0, 0, 0) 200%),
+    repeating-linear-gradient(0deg,
+      rgba(63, 63, 63, 0.2) 0px,
+      rgba(63, 63, 63, 0.2) 1px,
+      transparent 1px,
+      transparent var(--background-grid-size)),
+    repeating-linear-gradient(90deg,
+      rgba(63, 63, 63, 0.2) 0px,
+      rgba(63, 63, 63, 0.2) 1px,
+      transparent 1px,
+      transparent var(--background-grid-size)),
+    linear-gradient(90deg, hsl(240, 17%, 2%), hsl(235, 50%, 9%));
 }
 
 .chat-container {
@@ -101,7 +95,7 @@ body {
 .button {
   background-color: hsl(235, 55%, 45%);
   color: hsl(235, 75%, 85%);
-  
+
   border: none;
   border-radius: 5px;
   padding: 10px 15px;
@@ -233,7 +227,7 @@ body {
   transition: 0.4s;
 }
 
-input:checked + .slider-track .slider {
+input:checked+.slider-track .slider {
   left: 50%;
 }
 

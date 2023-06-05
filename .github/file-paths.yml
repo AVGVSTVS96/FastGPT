@@ -3,4 +3,4 @@ AVGVSTVS96/FlaskGPT:
   - static/styles.css
   - static/chat.js
   - static/interface.js
-  
+  - static/api.js

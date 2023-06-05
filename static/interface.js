@@ -8,6 +8,7 @@ let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
 let messages = [];
 let systemMessageRef = null;
 let autoScrollState = true;
+let lastScrollTop = 0;
 
 // Event listener functions
 function handleModelToggle() {
@@ -41,9 +42,17 @@ document;
 chatMessagesDiv.addEventListener("scroll", function () {
   const isAtBottom =
     chatMessagesDiv.scrollHeight - chatMessagesDiv.clientHeight <=
-    chatMessagesDiv.scrollTop + 1;
+    chatMessagesDiv.scrollTop + 150;
 
-  autoScrollState = isAtBottom;
+  // If user scrolls up, turn off auto-scrolling.
+  if (chatMessagesDiv.scrollTop < lastScrollTop) {
+    autoScrollState = false;
+  } else {
+    autoScrollState = isAtBottom;
+  }
+
+  // Update last scroll top value.
+  lastScrollTop = chatMessagesDiv.scrollTop;
 });
 
 window.renderMarkdown = function (content) {

@@ -7,8 +7,6 @@ const modelLabelRight = document.getElementById("model-label-right");
 
 // State variables
 let modelName = modelToggle.checked ? "gpt-4" : "gpt-3.5-turbo";
-let messages = [];
-let systemMessageRef = null;
 let autoScrollState = true;
 let lastScrollTop = 0;
 

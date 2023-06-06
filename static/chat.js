@@ -1,3 +1,7 @@
+// State variables
+let messages = [];
+let systemMessageRef = null;
+
 function updateSystemMessage(systemMessage) {
   if (
     systemMessage &&
